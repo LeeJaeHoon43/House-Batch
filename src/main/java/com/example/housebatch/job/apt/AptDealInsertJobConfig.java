@@ -3,6 +3,7 @@ package com.example.housebatch.job.apt;
 import com.example.housebatch.adapter.ApartmentApiResource;
 import com.example.housebatch.core.dto.AptDealDto;
 import com.example.housebatch.core.repository.LawdRepository;
+import com.example.housebatch.core.service.AptDealService;
 import com.example.housebatch.job.validator.LawdCdParameterValidator;
 import com.example.housebatch.job.validator.YearMonthParameterValidator;
 import lombok.RequiredArgsConstructor;
@@ -40,14 +41,13 @@ public class AptDealInsertJobConfig {
     @Bean
     public Job aptDealInsertJob(
             Step guLawdCdStep,
-            Step contextPrintStep
-            // Step aptDealInsertStep
+            Step aptDealInsertStep
     ){
         return jobBuilderFactory.get("aptDealInsertJob")
                 .incrementer(new RunIdIncrementer())
                 .validator(new YearMonthParameterValidator())
                 .start(guLawdCdStep)
-                .on("CONTINUABLE").to(contextPrintStep).next(guLawdCdStep)
+                .on("CONTINUABLE").to(aptDealInsertStep).next(guLawdCdStep)
                 .from(guLawdCdStep)
                 .on("*").end()
                 .end()
@@ -93,10 +93,10 @@ public class AptDealInsertJobConfig {
     @StepScope
     @Bean
     public Tasklet contextPrintTasklet(@Value("#{jobExecutionContext['guLawdCd']}") String guLawdCd){
-        return ((contribution, chunkContext) -> {
+        return (contribution, chunkContext) -> {
             System.out.println("[contextPrintStep] guLawdCd = " + guLawdCd);
             return RepeatStatus.FINISHED;
-        });
+        };
     }
 
 
@@ -135,7 +135,10 @@ public class AptDealInsertJobConfig {
 
     @StepScope
     @Bean
-    public ItemWriter<AptDealDto> aptDealWriter(){
-        return items -> items.forEach(System.out::println);
+    public ItemWriter<AptDealDto> aptDealWriter(AptDealService aptDealService){
+        return items -> {
+            items.forEach(aptDealService::upsert);
+            System.out.println("====================================== Writing Completed =============================================");
+        };
     }
 }
