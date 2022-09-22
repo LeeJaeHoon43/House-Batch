@@ -70,35 +70,28 @@ public class AptDealInsertJobConfig {
                 .build();
     }
 
-    /**
-     * ExecutionContext에 저장할 데이터.
-     * 1. guLawdCd = 구 코드 -> 다음 스텝에서 활용할 값.
-     * 2. guLawdCdList = 구 코드 리스트.
-     * 3. itemCount = 남아있는 구 코드의 갯수.
-     */
     @StepScope
     @Bean
     public Tasklet guLawdCdTasklet(LawdRepository lawdRepository){
         return new GuLawdTasklet(lawdRepository);
     }
 
-    @JobScope
-    @Bean
-    public Step contextPrintStep(Tasklet contextPrintTasklet){
-        return stepBuilderFactory.get("contextPrintStep")
-                .tasklet(contextPrintTasklet)
-                .build();
-    }
-
-    @StepScope
-    @Bean
-    public Tasklet contextPrintTasklet(@Value("#{jobExecutionContext['guLawdCd']}") String guLawdCd){
-        return (contribution, chunkContext) -> {
-            System.out.println("[contextPrintStep] guLawdCd = " + guLawdCd);
-            return RepeatStatus.FINISHED;
-        };
-    }
-
+//    @JobScope
+//    @Bean
+//    public Step contextPrintStep(Tasklet contextPrintTasklet){
+//        return stepBuilderFactory.get("contextPrintStep")
+//                .tasklet(contextPrintTasklet)
+//                .build();
+//    }
+//
+//    @StepScope
+//    @Bean
+//    public Tasklet contextPrintTasklet(@Value("#{jobExecutionContext['guLawdCd']}") String guLawdCd){
+//        return (contribution, chunkContext) -> {
+//            System.out.println("[contextPrintStep] guLawdCd = " + guLawdCd);
+//            return RepeatStatus.FINISHED;
+//        };
+//    }
 
     @JobScope
     @Bean
