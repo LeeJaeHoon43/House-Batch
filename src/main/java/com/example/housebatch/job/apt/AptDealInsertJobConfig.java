@@ -30,6 +30,9 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 아파트 실거래가 API 데이터를 저장하는 Job
+ */
 @Configuration
 @RequiredArgsConstructor
 @Slf4j

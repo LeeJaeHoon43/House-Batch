@@ -21,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import static com.example.housebatch.job.lawd.LawdFieldSetMapper.*;
 
+/**
+ * 동 코드를 가져오는 Job
+ */
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
